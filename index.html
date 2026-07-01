@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Вітрина - Tabakerka</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-hint-color: #707579;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f4f4f5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+            margin-bottom: 15px;
+        }
+
+        .header h1 { margin: 0; font-size: 20px; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color); }
+
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding-bottom: 80px;
+        }
+
+        .product-card {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        .product-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 8px 0 4px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 34px;
+        }
+
+        .product-price {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--tg-theme-link-color);
+            margin-bottom: 8px;
+        }
+
+        .btn-add {
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--tg-theme-bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--tg-theme-button-color);
+        }
+
+        .btn-qty {
+            background-color: transparent;
+            color: var(--tg-theme-button-color);
+            border: none;
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .qty-num { font-weight: bold; font-size: 14px; }
+        .status-message { text-align: center; color: var(--tg-theme-hint-color); margin-top: 50px; font-size: 16px; }
+        
+        #pc-order-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2481cc;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Вітрина Tabakerka</h1>
+        <p>Швидка доставка Новою Поштою</p>
+    </div>
+
+    <div id="status" class="status-message">Завантаження товарів...</div>
+    <div id="catalog" class="catalog" style="display: none;"></div>
+    <button id="pc-order-btn" onclick="sendOrderPC()">Оформити замовлення</button>
+
+    <script>
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        const isTelegram = tg && tg.initData !== "";
+
+        if (isTelegram) {
+            try {
+                tg.expand();
+                document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
+                document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#222222');
+                document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#707579');
+                document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color || '#2481cc');
+                document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#2481cc');
+                document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
+                document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f4f4f5');
+            } catch(e) { console.log("Помилка теми TG:", e); }
+        }
+
+        let cart = {};
+        let productsData = [];
+
+        // Функція завантаження товарів з вашого GitHub репозиторію
+        async function loadCatalog() {
+            try {
+                // Використовуємо пряме посилання на ваш products.json
+                const response = await fetch('https://githubusercontent.com' + Date.now());
+                if (!response.ok) throw new Error('Помилка завантаження файлу з GitHub');
+                productsData = await response.json();
+                
+                if (productsData.length === 0) {
+                    document.getElementById('status').innerText = 'Наразі товарів немає.';
+                    return;
+                }
+
+                document.getElementById('status').style.display = 'none';
+                const catalogContainer = document.getElementById('catalog');
+                catalogContainer.style.display = 'grid';
+                catalogContainer.innerHTML = '';
+
+                productsData.forEach((product, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <div>
+                            <img class="product-img" src="${product.image}" onerror="this.src='https://placeholder.com'">
+                            <div class="product-title">${product.title}</div>
+                        </div>
+                        <div>
+                            <div class="product-price">${product.price} грн</div>
+                            <div id="btn-block-${index}">
+                                <button class="btn-add" onclick="addToCart('${product.title.replace(/'/g, "\\'")}', ${index})">Купити</button>
+                            </div>
+                        </div>
+                    `;
+                    catalogContainer.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('status').innerText = 'Помилка: Не вдалося завантажити базу товарів з GitHub репозиторію.';
+            }
+        }
+
+        window.addToCart = function(title, index) {
+            cart[title] = 1;
+            updateCardButton(title, index);
+            updateCartStatus();
+        };
+
+        window.changeQty = function(title, index, delta) {
+            cart[title] += delta;
+            if (cart[title] <= 0) {
+                delete cart[title];
+                document.getElementById(`btn-block-${index}`).innerHTML = `
+                    <button class="btn-add" onclick="addToCart('${title.replace(/'/g, "\\'")}', ${index})">Купити</button>
+                `;
+            } else {
+                document.getElementById(`qty-${index}`).innerText = cart[title];
+            }
+            updateCartStatus();
+        };
+
+        function updateCardButton(title, index) {
+            const block = document.getElementById(`btn-block-${index}`);
+            block.innerHTML = `
+                <div class="quantity-control">
+                    <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, -1)">-</button>
+                    <span class="qty-num" id="qty-${index}">${cart[title]}</span>
+                    <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, 1)">+</button>
+                </div>
+            `;
+        }
+
+        function updateCartStatus() {
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            for (const title in cart) {
+                const product = productsData.find(p => p.title === title);
+                if (product) {
+                    totalItems += cart[title];
+                    totalPrice += product.price * cart[title];
+                }
+            }
+
+            if (totalItems > 0) {
+                if (isTelegram) {
+                    tg.MainButton.text = `Переглянути замовлення (${totalPrice} грн)`;
+                    tg.MainButton.show();
+                } else {
+                    const pcBtn = document.getElementById('pc-order-btn');
+                    pcBtn.innerText = `Оформити замовлення (${totalPrice} грн)`;
+                    pcBtn.style.display = 'block';
+                }
+            } else {
+                if (isTelegram) {
+                    tg.MainButton.hide();
+                } else {
+                    document.getElementById('pc-order-btn').style.display = 'none';
+                }
+            }
