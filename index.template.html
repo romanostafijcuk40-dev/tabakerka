@@ -130,7 +130,61 @@
         }
 
         function updateCartStatus() {
-            let totalItems = 0, totalPrice = 0;
+            let totalItems = 0;
+            let totalPrice = 0;
+
             for (const title in cart) {
                 const product = productsData.find(p => p.title === title);
-{
+                if (product) {
+                    totalItems += cart[title];
+                    totalPrice += product.price * cart[title];
+                }
+            }
+
+            if (totalItems > 0) {
+                if (isTelegram) {
+                    tg.MainButton.text = `Переглянути замовлення (${totalPrice} грн)`;
+                    tg.MainButton.show();
+                } else {
+                    const pcBtn = document.getElementById('pc-order-btn');
+                    pcBtn.innerText = `Оформити замовлення (${totalPrice} грн)`;
+                    pcBtn.style.display = 'block';
+                }
+            } else {
+                if (isTelegram) {
+                    tg.MainButton.hide();
+                } else {
+                    document.getElementById('pc-order-btn').style.display = 'none';
+                }
+            }
+        }
+
+        if (isTelegram) {
+            tg.MainButton.onClick(() => { sendOrderData(); });
+        }
+
+        function getOrderText() {
+            let orderDetails = [];
+            let totalPrice = 0;
+            for (const title in cart) {
+                const product = productsData.find(p => p.title === title);
+                if (product) {
+                    totalPrice += product.price * cart[title];
+                    orderDetails.push(`🔹 ${title} x${cart[title]} (${product.price * cart[title]} грн)`);
+                }
+            }
+            return `📦 НОВЕ ЗАМОВЛЕННЯ:\n\n${orderDetails.join('\n')}\n\n💰 Разом: ${totalPrice} грн`;
+        }
+
+        function sendOrderData() {
+            if (isTelegram) {
+                tg.sendData(getOrderText());
+                tg.close();
+            }
+        }
+
+        window.sendOrderPC = function() {
+            alert(getOrderText() + '\n\n(В Telegram це замовлення автоматично надійде в бот!)');
+        };
+
+        renderCatalog();
