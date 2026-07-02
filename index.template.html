@@ -86,7 +86,7 @@
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div>
-                        <img class="product-img" src="${product.image}" onerror="this.src='https://placeholder.com'">
+                        <img class="product-img" src="${product.image || 'https://placehold.co/120x120/eeeeee/999999?text=No+image'}" alt="${(product.title || '').replace(/"/g, '&quot;')}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/120x120/eeeeee/999999?text=No+image'">
                         <div class="product-title">${product.title}</div>
                     </div>
                     <div>

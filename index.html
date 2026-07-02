@@ -1,479 +1,136 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Вітрина - Tabakerka</title>
-        <script src="https://telegram.org"></script>
-        <style>
-                :root {
-                        --tg-theme-bg-color: #ffffff;
-                        --tg-theme-text-color: #222222;
-                        --tg-theme-hint-color: #707579;
-                        --tg-theme-link-color: #2481cc;
-                        --tg-theme-button-color: #2481cc;
-                        --tg-theme-button-text-color: #ffffff;
-                        --tg-theme-secondary-bg-color: #f4f4f5;
-                }
-                body {
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        background-color: var(--tg-theme-bg-color);
-                        color: var(--tg-theme-text-color);
-                        margin: 0; padding: 10px; box-sizing: border-box;
-                }
-                .header { text-align: center; padding: 15px 0; border-bottom: 1px solid var(--tg-theme-secondary-bg-color); margin-bottom: 15px; }
-                .header h1 { margin: 0; font-size: 20px; }
-                .header p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color); }
-                .catalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 80px; }
-                .product-card {
-                        background-color: var(--tg-theme-secondary-bg-color);
-                        border-radius: 12px; padding: 10px; display: flex; flex-direction: column;
-                        justify-content: space-between; overflow: hidden; border: 1px solid rgba(0,0,0,0.05);
-                }
-                .product-img { width: 100%; height: 120px; object-fit: contain; border-radius: 8px; background-color: #ffffff; }
-                .product-title { font-size: 13px; font-weight: 600; margin: 8px 0 4px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px; }
-                .product-price { font-size: 15px; font-weight: bold; color: var(--tg-theme-link-color); margin-bottom: 8px; }
-                .btn-add { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; }
-                .quantity-control { display: flex; align-items: center; justify-content: space-between; background-color: var(--tg-theme-bg-color); border-radius: 8px; border: 1px solid var(--tg-theme-button-color); }
-                .btn-qty { background-color: transparent; color: var(--tg-theme-button-color); border: none; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; }
-                .qty-num { font-weight: bold; font-size: 14px; }
-                #pc-order-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2481cc; color: white; padding: 12px 24px; border-radius: 20px; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; display: none; }
-        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Вітрина - Tabakerka</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-hint-color: #707579;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f4f4f5;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            margin: 0; padding: 10px; box-sizing: border-box;
+        }
+        .header { text-align: center; padding: 15px 0; border-bottom: 1px solid var(--tg-theme-secondary-bg-color); margin-bottom: 15px; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color); }
+        .catalog { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 80px; }
+        .product-card {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px; padding: 10px; display: flex; flex-direction: column;
+            justify-content: space-between; overflow: hidden; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .product-img { width: 100%; height: 120px; object-fit: contain; border-radius: 8px; background-color: #ffffff; }
+        .product-title { font-size: 13px; font-weight: 600; margin: 8px 0 4px 0; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px; }
+        .product-price { font-size: 15px; font-weight: bold; color: var(--tg-theme-link-color); margin-bottom: 8px; }
+        .btn-add { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; }
+        .quantity-control { display: flex; align-items: center; justify-content: space-between; background-color: var(--tg-theme-bg-color); border-radius: 8px; border: 1px solid var(--tg-theme-button-color); }
+        .btn-qty { background-color: transparent; color: var(--tg-theme-button-color); border: none; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .qty-num { font-weight: bold; font-size: 14px; }
+        #pc-order-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2481cc; color: white; padding: 12px 24px; border-radius: 20px; border: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; display: none; }
+    </style>
 </head>
 <body>
-        <div class="header">
-                <h1>Вітрина Tabakerka</h1>
-                <p>Швидка доставка Новою Поштою</p>
-        </div>
-        <div id="catalog" class="catalog"></div>
-        <button id="pc-order-btn" onclick="sendOrderPC()">Оформити замовлення</button>
+    <div class="header">
+        <h1>Вітрина Tabakerka</h1>
+        <p>Швидка доставка Новою Поштою</p>
+    </div>
+    <div id="catalog" class="catalog"></div>
+    <button id="pc-order-btn" onclick="sendOrderPC()">Оформити замовлення</button>
 
-        <script>
-                let tg = null;
-                if (window.Telegram && window.Telegram.WebApp) {
-                        tg = window.Telegram.WebApp;
-                        try {
-                                tg.expand();
-                                if (tg.themeParams && tg.themeParams.bg_color) {
-                                        document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-                                        document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
-                                        document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-                                        document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color);
-                                        document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-                                        document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
-                                        document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
-                                }
-                        } catch(e) { console.log("Помилка теми:", e); }
+    <script>
+        let tg = null;
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            try {
+                tg.expand();
+                if (tg.themeParams && tg.themeParams.bg_color) {
+                    document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+                    document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
+                    document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+                    document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color);
+                    document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+                    document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+                    document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
                 }
+            } catch(e) { console.log("Помилка теми:", e); }
+        }
 
-                const isTelegram = tg !== null && tg.initData !== "";
-                let cart = {};
+        const isTelegram = tg !== null && tg.initData !== "";
+        let cart = {};
 
-                // Товари вшиті з products.json
-                const productsData = [
-    {
-        "title": "Kent KS 8 turbo (New)",
-        "price": 800,
-        "base_price": 750,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "750₴",
-        "price": 800,
-        "base_price": 750,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Parliament Aqua Blue Turbo (квадрат)",
-        "price": 800,
-        "base_price": 750,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Marlboro KS red (квадрат кольцо)",
-        "price": 800,
-        "base_price": 750,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Marlboro Experience KS red",
-        "price": 800,
-        "base_price": 750,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Winston KS red (акциз)",
-        "price": 790,
-        "base_price": 740,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "740₴",
-        "price": 790,
-        "base_price": 740,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "LD KS red (акциз)",
-        "price": 790,
-        "base_price": 740,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Sobranie Demi Gold",
-        "price": 740,
-        "base_price": 690,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "690₴",
-        "price": 740,
-        "base_price": 690,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Kent crystal DEMI turbo",
-        "price": 740,
-        "base_price": 690,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Brut Demi Slim Black",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "680₴",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Brut Demi Slim White",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Urta White Super Slim",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Urta Black Super Slim",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Rothmans DEMI turbo",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Urta Super Slims menthol",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Urta Demi Slim (menthol)",
-        "price": 730,
-        "base_price": 680,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Marshal KS red 80 mm",
-        "price": 720,
-        "base_price": 670,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "670₴",
-        "price": 720,
-        "base_price": 670,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Kansas KS blue",
-        "price": 710,
-        "base_price": 660,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "660₴",
-        "price": 710,
-        "base_price": 660,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Kansas KS red",
-        "price": 710,
-        "base_price": 660,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "LM loft DEMI Turbo",
-        "price": 710,
-        "base_price": 660,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Marshal Super Slim red (тонкий)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "650₴",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Marshal Super Slim blue (тонкий)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Desert Evening KS100 mm",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Desert Morning KS 100mm",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "OK KS Blue100 mm",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "OK KS Red100 mm",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "BL KS classic 100 ml",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Lucky Strike red (квадратная пачка)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Rothmans KS blue",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Bond KS blue (квадрат)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Brut КS Red",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Brut KS Blue",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "LM KS blue",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Winston KS blue (квадратная пачка)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Camel KS (классическая пачка)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Cigaronne Demi White (преміум якість)",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    },
-    {
-        "title": "Lucky Strike red Demi",
-        "price": 700,
-        "base_price": 650,
-        "image": "https://tildacdn.one",
-        "description": "Гуртовий продаж. Швидка доставка Новою Поштою."
-    }
-];
+        // Мітка для підстановки JSON-масиву товарів (будет подставлен как закодированная строка)
+        let productsData = [];
+        try {
+            productsData = JSON.parse(decodeURIComponent('%5B%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Kent%20KS%208%20turbo%20%28New%29%22%2C%0A%20%20%20%20%22price%22%3A%20800%2C%0A%20%20%20%20%22base_price%22%3A%20750%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3266-3063-4265-b634-313937623034%2F567b58839e423eccea0e82ef026b53cd.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-8%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Parliament%20Aqua%20Blue%20Turbo%20%28%D0%BA%D0%B2%D0%B0%D0%B4%D1%80%D0%B0%D1%82%29%22%2C%0A%20%20%20%20%22price%22%3A%20800%2C%0A%20%20%20%20%22base_price%22%3A%20750%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6137-6338-4433-b636-383431323063%2Fd0d25b88af826684be0a16894f14547e.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Marlboro%20KS%20red%20%28%D0%BA%D0%B2%D0%B0%D0%B4%D1%80%D0%B0%D1%82%20%D0%BA%D0%BE%D0%BB%D1%8C%D1%86%D0%BE%29%22%2C%0A%20%20%20%20%22price%22%3A%20800%2C%0A%20%20%20%20%22base_price%22%3A%20750%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3935-6138-4433-b263-393539636561%2F91b2104506469d81b3d26283584316d4.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-9%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Marlboro%20Experience%20KS%20red%22%2C%0A%20%20%20%20%22price%22%3A%20800%2C%0A%20%20%20%20%22base_price%22%3A%20750%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3061-3337-4932-a463-643432653631%2F7aacae810e61717bae92e5333484ecdc.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Winston%20KS%20red%20%28%D0%B0%D0%BA%D1%86%D0%B8%D0%B7%29%22%2C%0A%20%20%20%20%22price%22%3A%20790%2C%0A%20%20%20%20%22base_price%22%3A%20740%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6136-3731-4562-a236-363031333764%2F20842942.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22LD%20KS%20red%20%28%D0%B0%D0%BA%D1%86%D0%B8%D0%B7%29%22%2C%0A%20%20%20%20%22price%22%3A%20790%2C%0A%20%20%20%20%22base_price%22%3A%20740%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3733-6636-4234-a633-396632626137%2F102fd56fcbb0507853bc2e3af838a358.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.6%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Sobranie%20Demi%20Gold%22%2C%0A%20%20%20%20%22price%22%3A%20740%2C%0A%20%20%20%20%22base_price%22%3A%20690%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6238-6339-4637-b431-366231336661%2F17683823.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.3%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-3%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Kent%20crystal%20DEMI%20turbo%22%2C%0A%20%20%20%20%22price%22%3A%20740%2C%0A%20%20%20%20%22base_price%22%3A%20690%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6331-6136-4561-b934-656133616235%2F61951057.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.6%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Brut%20Demi%20Slim%20Black%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3237-3461-4939-b537-363933353665%2F31325610.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.6%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Brut%20Demi%20Slim%20White%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3037-3833-4430-b739-626532373861%2F30258338.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-4%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Urta%20White%20Super%20Slim%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3531-3932-4238-b561-346337333433%2F88587705.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-4%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Urta%20Black%20Super%20Slim%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3732-3531-4839-a637-366265616463%2F26051381.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Rothmans%20DEMI%20turbo%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3732-3436-4832-a666-646532376464%2F41115769.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Urta%20Super%20Slims%20menthol%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3732-3261-4737-a662-326231633937%2F99209502.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-4%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Urta%20Demi%20Slim%20%28menthol%29%22%2C%0A%20%20%20%20%22price%22%3A%20730%2C%0A%20%20%20%20%22base_price%22%3A%20680%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3039-6263-4737-a666-376265613630%2F88971071.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-4%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Marshal%20KS%20red%2080%20mm%22%2C%0A%20%20%20%20%22price%22%3A%20720%2C%0A%20%20%20%20%22base_price%22%3A%20670%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3262-6438-4534-b366-663437393134%2F45075038.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-8%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Kansas%20KS%20blue%22%2C%0A%20%20%20%20%22price%22%3A%20710%2C%0A%20%20%20%20%22base_price%22%3A%20660%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6565-3337-4733-a433-343239303035%2F59555965.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%200.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%206%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Kansas%20KS%20red%22%2C%0A%20%20%20%20%22price%22%3A%20710%2C%0A%20%20%20%20%22base_price%22%3A%20660%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6537-6362-4464-b438-383536626265%2F54526932.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%200.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%207%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22LM%20loft%20DEMI%20Turbo%22%2C%0A%20%20%20%20%22price%22%3A%20710%2C%0A%20%20%20%20%22base_price%22%3A%20660%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3434-3461-4231-b761-376638626634%2F95665611.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Marshal%20Super%20Slim%20red%20%28%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D0%B9%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6432-3334-4561-b638-373264623134%2F32415389.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%200.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%208%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Marshal%20Super%20Slim%20blue%20%28%D1%82%D0%BE%D0%BD%D0%BA%D0%B8%D0%B9%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6638-3666-4131-b633-613833346135%2F64422752.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%200.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%207%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Desert%20Evening%20KS100%20mm%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6333-3233-4533-a531-643263373238%2F16218659.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-8%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Desert%20Morning%20KS%20100mm%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6462-3863-4565-b665-346163336135%2F41724156.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22OK%20KS%20Blue100%20mm%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3032-6566-4535-b436-353261353630%2Ff65906774d1450c5cc0f98f646a3224a.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22OK%20KS%20Red100%20mm%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6665-3465-4563-b038-363063396631%2Fd532ed1da57688b90fe825ba08340d76.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-8%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22BL%20KS%20classic%20100%20ml%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3163-6334-4331-b934-643336626433%2F40498976.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%200.7%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%206%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Lucky%20Strike%20red%20%28%D0%BA%D0%B2%D0%B0%D0%B4%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F%20%D0%BF%D0%B0%D1%87%D0%BA%D0%B0%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3732-3333-4366-a130-323534636530%2F86554617.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.6%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-7%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Rothmans%20KS%20blue%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3761-6130-4962-b837-353465646161%2F11101689.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Bond%20KS%20blue%20%28%D0%BA%D0%B2%D0%B0%D0%B4%D1%80%D0%B0%D1%82%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6638-3664-4234-b531-336565323661%2F80495780.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-%202%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-%2012%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Brut%20%D0%9AS%20Red%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6565-3635-4431-a432-303162313033%2F71847978.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.6%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-6%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Brut%20KS%20Blue%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3665-3432-4962-b438-376165316261%2F14225945.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.4%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-4%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22LM%20KS%20blue%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3166-6461-4337-b234-353364336364%2F11054077.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB%20-%206%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Winston%20KS%20blue%20%28%D0%BA%D0%B2%D0%B0%D0%B4%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F%20%D0%BF%D0%B0%D1%87%D0%BA%D0%B0%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3463-3661-4564-b436-316365646530%2F37099751.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.5%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-7%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Camel%20KS%20%28%D0%BA%D0%BB%D0%B0%D1%81%D1%81%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BF%D0%B0%D1%87%D0%BA%D0%B0%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6433-3566-4362-b136-646661363033%2F63108972.jpg%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Cigaronne%20Demi%20White%20%28%D0%BF%D1%80%D0%B5%D0%BC%D1%96%D1%83%D0%BC%20%D1%8F%D0%BA%D1%96%D1%81%D1%82%D1%8C%29%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor6261-6134-4532-b336-333063346163%2Fd8685a2ae27c8e6b1877f0c5ad531c8f.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.3%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-3%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20%22title%22%3A%20%22Lucky%20Strike%20red%20Demi%22%2C%0A%20%20%20%20%22price%22%3A%20700%2C%0A%20%20%20%20%22base_price%22%3A%20650%2C%0A%20%20%20%20%22image%22%3A%20%22https%3A%2F%2Fstatic.tildacdn.one%2Fstor3839-6362-4431-b166-656662376162%2F83998535.png%22%2C%0A%20%20%20%20%22description%22%3A%20%22%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D0%BD%D0%B8%D0%BA%D0%BE%D1%82%D0%B8%D0%BD%D0%B0%20-0.8%20%D0%9A%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE%20%D1%81%D0%BC%D0%BE%D0%BB-10%22%0A%20%20%7D%0A%5D'));
+        } catch (e) {
+            console.error('Failed to parse products JSON:', e);
+            productsData = [];
+        }
 
-                function renderCatalog() {
-                        const catalogContainer = document.getElementById('catalog');
-                        catalogContainer.innerHTML = '';
-                        productsData.forEach((product, index) => {
-                                const card = document.createElement('div');
-                                card.className = 'product-card';
-                                card.innerHTML = `
-                                        <div>
-                                                <img class="product-img" src="${product.image}" onerror="this.src='https://placeholder.com'">
-                                                <div class="product-title">${product.title}</div>
-                                        </div>
-                                        <div>
-                                                <div class="product-price">${product.price} грн</div>
-                                                <div id="btn-block-${index}">
-                                                        <button class="btn-add" onclick="addToCart('${product.title.replace(/'/g, "\\'")}', ${index})">Купити</button>
-                                                </div>
-                                        </div>
-                                `;
-                                catalogContainer.appendChild(card);
-                        });
-                }
+        function renderCatalog() {
+            const catalogContainer = document.getElementById('catalog');
+            catalogContainer.innerHTML = '';
+            productsData.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <img class="product-img" src="${product.image || 'https://placehold.co/120x120/eeeeee/999999?text=No+image'}" alt="${(product.title || '').replace(/"/g, '&quot;')}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/120x120/eeeeee/999999?text=No+image'">
+                        <div class="product-title">${product.title}</div>
+                    </div>
+                    <div>
+                        <div class="product-price">${product.price} грн</div>
+                        <div id="btn-block-${index}">
+                            <button class="btn-add" onclick="addToCart('${product.title.replace(/'/g, "\\'")}', ${index})">Купити</button>
+                        </div>
+                    </div>
+                `;
+                catalogContainer.appendChild(card);
+            });
+        }
 
-                window.addToCart = function(title, index) {
-                        cart[title] = 1;
-                        updateCardButton(title, index);
-                        updateCartStatus();
-                };
+        window.addToCart = function(title, index) {
+            cart[title] = 1;
+            updateCardButton(title, index);
+            updateCartStatus();
+        };
 
-                window.changeQty = function(title, index, delta) {
-                        cart[title] += delta;
-                        if (cart[title] <= 0) {
-                                delete cart[title];
-                                document.getElementById(`btn-block-${index}`).innerHTML = `
-                                        <button class="btn-add" onclick="addToCart('${title.replace(/'/g, "\\'")}', ${index})">Купити</button>
-                                `;
-                        } else {
-                                document.getElementById(`qty-${index}`).innerText = cart[title];
-                        }
-                        updateCartStatus();
-                };
+        window.changeQty = function(title, index, delta) {
+            cart[title] += delta;
+            if (cart[title] <= 0) {
+                delete cart[title];
+                document.getElementById(`btn-block-${index}`).innerHTML = `
+                    <button class="btn-add" onclick="addToCart('${title.replace(/'/g, "\\'")}', ${index})">Купити</button>
+                `;
+            } else {
+                document.getElementById(`qty-${index}`).innerText = cart[title];
+            }
+            updateCartStatus();
+        };
 
-                function updateCardButton(title, index) {
-                        document.getElementById(`btn-block-${index}`).innerHTML = `
-                                <div class="quantity-control">
-                                        <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, -1)">-</button>
-                                        <span class="qty-num" id="qty-${index}">${cart[title]}</span>
-                                        <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, 1)">+</button>
-                                </div>
-                        `;
-                }
+        function updateCardButton(title, index) {
+            document.getElementById(`btn-block-${index}`).innerHTML = `
+                <div class="quantity-control">
+                    <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, -1)">-</button>
+                    <span class="qty-num" id="qty-${index}">${cart[title]}</span>
+                    <button class="btn-qty" onclick="changeQty('${title.replace(/'/g, "\\'")}', ${index}, 1)">+</button>
+                </div>
+            `;
+        }
 
-                function updateCartStatus() {
-                        let totalItems = 0, totalPrice = 0;
-                        for (const title in cart) {
-                                const product = productsData.find(p => p.title === title);
-                                if (product) {
-                                        totalItems += cart[title];
-                                        totalPrice += product.price * cart[title];
-                                }
-                        }
-                        if (totalItems > 0) {
-                                if (isTelegram) {
-                                        tg.MainButton.text = `Переглянути замовлення (${totalPrice} грн)`;
-                                        tg.MainButton.show();
-                                } else {
-                                        const pcBtn = document.getElementById('pc-order-btn');
-                                        pcBtn.innerText = `Оформити замовлення (${totalPrice} грн)`;
-                                        pcBtn.style.display = 'block';
-                                }
-                        } else {
-                                if (isTelegram) { tg.MainButton.hide(); }
-                                else { document.getElementById('pc-order-btn').style.display = 'none'; }
-                        }
-                }
-
-                if (isTelegram) {
-                        tg.MainButton.onClick(() => { sendOrderData(); });
-                }
-
-                function getOrderText() {
-                        let orderDetails = [], totalPrice = 0;
-                        for (const title in cart) {
-                                const product = productsData.find(p => p.title === title);
-                                if (product) {
-                                        totalPrice += product.price * cart[title];
-                                        orderDetails.push(`🔹 ${title} x${cart[title]} (${product.price * cart[title]} грн)`);
-                                }
-                        }
-                        return `📦 НОВЕ ЗАМОВЛЕННЯ:\n\n${orderDetails.join('\n')}\n\n💰 Разом: ${totalPrice} грн`;
-                }
-
-                function sendOrderData() {
-                        if (isTelegram) { tg.sendData(getOrderText()); tg.close(); }
-                }
-
-                window.sendOrderPC = function() {
-                        alert(getOrderText() + "\n\n(В Telegram це замовлення автоматично надійде в бот!)");
-                };
-
-                renderCatalog();
-        </script>
-</body>
-</html>
+        function updateCartStatus() {
+            let totalItems = 0, totalPrice = 0;
+            for (const title in cart) {
+                const product = productsData.find(p => p.title === title);
+{
